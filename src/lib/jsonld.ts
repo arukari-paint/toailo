@@ -16,7 +16,6 @@ export function organizationLd(): JsonLd {
     name: SITE.name,
     url: absoluteUrl('/'),
     logo: absoluteUrl('/icon-512.png'),
-    email: SITE.contactEmail,
   };
 }
 

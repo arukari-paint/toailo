@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { SITE } from '@/config/site';
 import { breadcrumbLd } from '@/lib/jsonld';
 const crumbs = [{ name: 'ホーム', path: '/' }, { name: 'プライバシー', path: '/privacy/' }];
 /** 各アプリのプライバシーポリシー（App Store に登録済みのURL。内容はアプリごとに管理） */
@@ -43,9 +42,6 @@ const appPolicies = [
 
       <h2>本ページの変更</h2>
       <p>本サイトでの情報の取り扱いを変更する場合（アクセス解析の導入など）は、このページを改定してお知らせします。</p>
-
-      <h2>お問い合わせ</h2>
-      <p><a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a></p>
     </div>
   </div>
 </BaseLayout>

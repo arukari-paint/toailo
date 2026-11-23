@@ -9,8 +9,6 @@ export const SITE = {
     'TOAILOは、日々の記録をChatGPT・Claude・Geminiなど好きなAIへ持ち出して活用できるアプリシリーズです。家計簿・ToDoリストを提供しています。アプリ内でAIを呼び出さず、データは端末に保存されます。',
   locale: 'ja_JP',
   lang: 'ja',
-  /** お問い合わせ（各アプリのサポートページと同じ窓口） */
-  contactEmail: 'toailo.help@outlook.jp',
   /** 著作権表記 */
   copyrightYear: 2026,
 } as const;

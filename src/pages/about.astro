@@ -42,9 +42,6 @@ const crumbs = [{ name: 'ホーム', path: '/' }, { name: 'TOAILOについて', 
         <li class="card"><a href={path(a.path)}><strong>{a.name}</strong></a><br /><span class="muted small">{a.summary}</span></li>
       ))}
     </ul>
-
-    <h2 class="sub">お問い合わせ</h2>
-    <p>アプリについてのご質問・不具合のご報告は、<a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> までお問い合わせください。</p>
   </div>
 </BaseLayout>
 
