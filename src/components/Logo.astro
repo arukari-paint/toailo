@@ -1,0 +1,37 @@
+---
+/**
+ * TOAILO ロゴ（暫定）。
+ * アプリの TOAILO Design System（logoInterim）と同じ形をSVGで描いたもの。正式なロゴデータが用意できたら差し替える。
+ */
+interface Props { size?: number }
+const { size = 28 } = Astro.props;
+const PAD = 9;
+const vb = `${-PAD} ${-PAD} ${229 + PAD * 2} ${195 + PAD * 2}`;
+const layers = [
+  { points: '0,97 102,55 102,115 0,140', opacity: 0.38 },
+  { points: '27,50 142,0 142,120 27,165', opacity: 0.5 },
+  { points: '62,80 180,30 180,145 62,195', opacity: 0.6 },
+];
+---
+<span class="logo">
+  <svg width={(size * (229 + PAD * 2)) / (195 + PAD * 2)} height={size} viewBox={vb} aria-hidden="true" focusable="false">
+    {layers.map((l) => (
+      <g opacity={l.opacity}>
+        <polygon points={l.points} fill="currentColor" stroke="currentColor" stroke-width="18" stroke-linejoin="round" />
+      </g>
+    ))}
+    <circle cx="212" cy="100" r="17" fill="currentColor" />
+  </svg>
+  <span class="logo-type" aria-label="TOAILO"><span aria-hidden="true">TO<span class="logo-a">Λ</span>ILO</span></span>
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--accent); }
+  .logo-type { color: var(--text); font-weight: 600; letter-spacing: 0.14em; font-size: 1.05rem; line-height: 1; }
+  .logo-a { position: relative; display: inline-block; }
+  .logo-a::after {
+    content: ''; position: absolute; left: 50%; top: 58%;
+    width: 0.2em; height: 0.2em; border-radius: 50%; background: var(--accent);
+    transform: translate(-50%, -50%);
+  }
+</style>

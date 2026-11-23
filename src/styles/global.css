@@ -1,0 +1,107 @@
+/* TOAILO サイト共通スタイル。色はトークンだけを使う（アプリの TOAILO Design System に合わせる） */
+:root {
+  --accent: #42c7c7;          /* TOAILO Accent（ティファニーブルー系）。装飾・アイコン・強調の面に使う */
+  --accent-strong: #15777a;   /* 白地の文字・ボタン用（白とのコントラスト 4.5:1 以上） */
+  --accent-subtle: #e5f8f7;
+  --accent-line: #bfeceb;
+  --bg: #ffffff;
+  --bg-soft: #f7f9f9;
+  --bg-muted: #eef2f2;
+  --text: #171a1a;
+  --text-secondary: #4f5757;
+  --text-tertiary: #6b7474;
+  --border: #e2e7e7;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 2px rgb(23 26 26 / 0.04), 0 6px 20px rgb(23 26 26 / 0.05);
+  --content: 1080px;
+  --prose: 720px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --font: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', Meiryo, system-ui, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 80px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font); font-size: 1rem; line-height: 1.85; letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--accent-strong); text-underline-offset: 0.2em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3, h4 { line-height: 1.45; letter-spacing: 0.01em; margin: 0 0 0.6em; }
+h1 { font-size: clamp(1.7rem, 1.2rem + 2.2vw, 2.5rem); }
+h2 { font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem); }
+h3 { font-size: 1.15rem; }
+p { margin: 0 0 1em; }
+ul, ol { padding-left: 1.4em; }
+
+.skip-link { position: absolute; left: -9999px; top: 8px; z-index: 100; background: var(--text); color: #fff; padding: 8px 14px; border-radius: 8px; }
+.skip-link:focus { left: 8px; }
+
+.container { width: 100%; max-width: var(--content); margin: 0 auto; padding: 0 var(--gutter); }
+.prose-container { max-width: calc(var(--prose) + var(--gutter) * 2); }
+.section { padding: clamp(48px, 8vw, 88px) 0; }
+.section-soft { background: var(--bg-soft); }
+.section-head { max-width: 680px; margin-bottom: 32px; }
+.eyebrow { display: inline-block; color: var(--accent-strong); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.12em; margin-bottom: 8px; }
+.lead { color: var(--text-secondary); font-size: 1.05rem; }
+.muted { color: var(--text-secondary); }
+.small { font-size: 0.88rem; }
+
+.grid { display: grid; gap: 20px; }
+@media (min-width: 720px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+
+.card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: clamp(20px, 3vw, 28px); box-shadow: var(--shadow);
+}
+.card h3 { margin-bottom: 0.4em; }
+.card p:last-child { margin-bottom: 0; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5em;
+  min-height: 48px; padding: 0 22px; border-radius: 999px; font-weight: 700; text-decoration: none;
+  border: 1.5px solid transparent; transition: background-color .15s, border-color .15s;
+}
+.btn-primary { background: var(--accent-strong); color: #fff; }
+.btn-primary:hover { background: #0f6467; }
+.btn-secondary { background: var(--bg); color: var(--accent-strong); border-color: var(--accent-line); }
+.btn-secondary:hover { border-color: var(--accent-strong); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--accent-subtle); color: var(--accent-strong); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; }
+.badge-neutral { background: var(--bg-muted); color: var(--text-secondary); }
+
+.check-list { list-style: none; padding: 0; margin: 0; }
+.check-list li { position: relative; padding-left: 1.7em; margin-bottom: 0.5em; }
+.check-list li::before {
+  content: ''; position: absolute; left: 0.15em; top: 0.6em; width: 0.8em; height: 0.45em;
+  border-left: 2.5px solid var(--accent-strong); border-bottom: 2.5px solid var(--accent-strong); transform: rotate(-45deg);
+}
+
+/* スクロール時の控えめな表示演出（JSが有効で、動きを減らす設定でない場合のみ） */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+  html.js [data-reveal].is-visible { opacity: 1; transform: none; }
+}
+
+/* 記事本文 */
+.prose { font-size: 1.02rem; }
+.prose h2 { margin-top: 2.4em; padding-bottom: 0.35em; border-bottom: 2px solid var(--accent-subtle); }
+.prose h3 { margin-top: 1.8em; }
+.prose table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 1.2em 0 1.6em; display: block; overflow-x: auto; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; white-space: nowrap; }
+.prose th { background: var(--bg-soft); }
+.prose pre { background: var(--bg-soft) !important; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; overflow-x: auto; font-size: 0.88rem; line-height: 1.7; }
+.prose pre code { white-space: pre-wrap; word-break: break-word; }
+.prose code { font-family: var(--mono); font-size: 0.9em; }
+.prose :not(pre) > code { background: var(--bg-muted); padding: 0.1em 0.35em; border-radius: 4px; }
+.prose blockquote { margin: 1.4em 0; padding: 14px 18px; border-left: 4px solid var(--accent); background: var(--accent-subtle); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; color: var(--text); }
+.prose blockquote p:last-child { margin-bottom: 0; }
+.prose li { margin-bottom: 0.3em; }
+.prose img { border-radius: var(--radius-sm); }

@@ -1,0 +1,103 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import AppCard from '@/components/AppCard.astro';
+import GuideCard from '@/components/GuideCard.astro';
+import HowItWorks from '@/components/HowItWorks.astro';
+import FaqList from '@/components/FaqList.astro';
+import { SITE } from '@/config/site';
+import { APP_LIST, APPS } from '@/data/apps';
+import { SITE_FAQ } from '@/data/faq';
+import { getPublishedGuides } from '@/lib/guides';
+import { faqLd } from '@/lib/jsonld';
+import { path } from '@/lib/url';
+
+const latest = (await getPublishedGuides()).slice(0, 3);
+const faq = SITE_FAQ.slice(0, 5);
+---
+<BaseLayout description={SITE.description} pagePath="/" jsonLd={[faqLd(faq)]}>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">TOAILO APPS</p>
+        <h1>記録する。<br />持ち出す。<br /><span class="accent">AIで活かす。</span></h1>
+        <p class="lead">TOAILOは、日々の記録を ChatGPT・Claude・Gemini など好きなAIへ持ち出して活用できるアプリシリーズです。データは端末に保存し、AIに何を渡すかは自分で決められます。</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="#apps">アプリを見る</a>
+          <a class="btn btn-secondary" href={path('/guides/')}>AI活用ガイドを読む</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <Image src={APPS.household.screenshots[0].src} alt="" widths={[260, 400, 520]} sizes="(min-width: 860px) 230px, 40vw" class="shot shot-a" loading="eager" />
+        <Image src={APPS.tasks.screenshots[0].src} alt="" widths={[260, 400, 520]} sizes="(min-width: 860px) 230px, 40vw" class="shot shot-b" loading="eager" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="apps" aria-labelledby="apps-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">APPS</p>
+        <h2 id="apps-title">TOAILOのアプリ</h2>
+        <p class="lead">どちらも iPhone 向けに App Store で無料配信中です。</p>
+      </div>
+      <div class="grid grid-2">{APP_LIST.map((app) => <AppCard app={app} />)}</div>
+    </div>
+  </section>
+
+  <section class="section section-soft" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">HOW IT WORKS</p>
+        <h2 id="how-title">AI連携のしくみ</h2>
+        <p class="lead">TOAILOのAI連携は、アプリの中でAIが動くのではなく、記録したデータをAIへ「持ち出す」方式です。</p>
+      </div>
+      <HowItWorks />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="why-title">
+    <div class="container">
+      <div class="section-head"><p class="eyebrow">WHY TOAILO</p><h2 id="why-title">持ち出す方式を選んだ理由</h2></div>
+      <div class="grid grid-3">
+        <div class="card" data-reveal><h3>好きなAIを使える</h3><p class="muted">特定のAIに縛られず、ふだん使っているAIや、そのとき一番合うAIを選べます。</p></div>
+        <div class="card" data-reveal><h3>渡す内容を自分で選べる</h3><p class="muted">メモなど個人的な内容は初期状態では含めません。渡す前にプレビューで確認できます。</p></div>
+        <div class="card" data-reveal><h3>AIに計算させない</h3><p class="muted">合計や件数などの集計はアプリが先に計算してから渡すので、AIは読み解きに集中できます。</p></div>
+      </div>
+    </div>
+  </section>
+
+  {latest.length > 0 && (
+    <section class="section section-soft" aria-labelledby="guides-title">
+      <div class="container">
+        <div class="section-head head-row">
+          <div><p class="eyebrow">GUIDES</p><h2 id="guides-title">AI活用ガイド 新着記事</h2></div>
+          <a href={path('/guides/')} class="more">すべての記事を見る →</a>
+        </div>
+        <div class="grid grid-3">{latest.map((g) => <GuideCard guide={g} />)}</div>
+      </div>
+    </section>
+  )}
+
+  <section class="section" aria-labelledby="faq-title">
+    <div class="container prose-container">
+      <div class="section-head"><p class="eyebrow">FAQ</p><h2 id="faq-title">よくある質問</h2></div>
+      <FaqList items={faq} />
+      <p class="more-faq"><a href={path('/faq/')}>よくある質問をすべて見る →</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero { padding: clamp(40px, 7vw, 80px) 0; background: radial-gradient(1200px 500px at 85% 0%, var(--accent-subtle), transparent 60%), var(--bg); overflow: hidden; }
+  .hero-grid { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 860px) { .hero-grid { grid-template-columns: 1.1fr 1fr; } }
+  .hero h1 { font-size: clamp(2.1rem, 1.4rem + 3.4vw, 3.4rem); line-height: 1.3; margin-bottom: 20px; }
+  .accent { color: var(--accent-strong); }
+  .hero-visual { display: flex; justify-content: center; gap: 16px; }
+  .shot { width: 44%; max-width: 230px; border-radius: 20px; box-shadow: 0 10px 30px rgb(23 26 26 / 0.12); border: 1px solid var(--border); }
+  .shot-b { margin-top: 40px; }
+  .head-row { display: flex; justify-content: space-between; align-items: end; gap: 16px; max-width: none; flex-wrap: wrap; }
+  .more, .more-faq a { font-weight: 700; text-decoration: none; }
+  .more-faq { margin-top: 20px; }
+</style>

@@ -1,0 +1,38 @@
+---
+/** 記事の目次。h2 を番号付きリスト、h3 をその下の入れ子リストにする */
+import type { MarkdownHeading } from 'astro';
+interface Props { headings: MarkdownHeading[] }
+type Node = { h: MarkdownHeading; children: MarkdownHeading[] };
+const tree: Node[] = [];
+for (const h of Astro.props.headings) {
+  if (h.depth === 2) tree.push({ h, children: [] });
+  else if (h.depth === 3 && tree.length) tree[tree.length - 1].children.push(h);
+}
+---
+{tree.length > 0 && (
+  <nav class="toc" aria-labelledby="toc-title">
+    <p id="toc-title" class="toc-title">目次</p>
+    <ol>
+      {tree.map((n) => (
+        <li>
+          <a href={`#${n.h.slug}`}>{n.h.text}</a>
+          {n.children.length > 0 && (
+            <ul>{n.children.map((c) => <li><a href={`#${c.slug}`}>{c.text}</a></li>)}</ul>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .toc { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; margin: 28px 0 8px; }
+  .toc-title { font-weight: 700; margin-bottom: 6px; }
+  ol { margin: 0; padding-left: 1.3em; }
+  li { margin: 4px 0; font-size: 0.95rem; }
+  ul { list-style: none; margin: 2px 0 6px; padding-left: 0.4em; }
+  ul li { font-size: 0.9rem; }
+  ul li::before { content: '– '; color: var(--text-tertiary); }
+  a { color: var(--text); text-decoration: none; }
+  a:hover { color: var(--accent-strong); text-decoration: underline; }
+</style>

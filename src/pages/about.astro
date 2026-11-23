@@ -1,0 +1,55 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import HowItWorks from '@/components/HowItWorks.astro';
+import { SITE } from '@/config/site';
+import { APP_LIST } from '@/data/apps';
+import { breadcrumbLd } from '@/lib/jsonld';
+import { path } from '@/lib/url';
+const crumbs = [{ name: 'ホーム', path: '/' }, { name: 'TOAILOについて', path: '/about/' }];
+---
+<BaseLayout
+  title="TOAILOについて"
+  description="TOAILOは「記録する。持ち出す。AIで活かす。」をコンセプトにしたアプリシリーズです。アプリ内でAIを動かさず、記録を好きなAIへ持ち出して活用する考え方と、提供中のアプリを紹介します。"
+  pagePath="/about/"
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="container prose-container"><Breadcrumbs items={crumbs} /></div>
+  <div class="container prose-container page">
+    <p class="eyebrow">ABOUT</p>
+    <h1>TOAILOについて</h1>
+    <p class="lead">{SITE.message}</p>
+    <div class="prose">
+      <p>TOAILOは、日々の暮らしや仕事の記録を、自分で選んだAIへ持ち出して活かすためのアプリシリーズです。各アプリの名前には「by TOAILO」が付き、アプリ内では「記録して、AIへ。」という言葉で案内しています。</p>
+
+      <h2>大切にしていること</h2>
+      <h3>アプリの中でAIを動かさない</h3>
+      <p>TOAILOのアプリは、アプリの中でAIを呼び出しません。代わりに、記録したデータをAIが読み取りやすい形のテキストにまとめます。利用者はそれをコピーし、ChatGPT・Claude・Geminiなど、ふだん使っているAIに貼り付けて使います。</p>
+      <h3>データは端末に、渡す内容は自分で</h3>
+      <p>記録はお使いの端末の中に保存され、開発者のサーバーに送られることはありません。AIに渡すときも、どの項目を含めるかを利用者が選べます。メモなど個人的な内容が入りやすい項目は、初期状態では含めない設計です。</p>
+      <h3>計算はアプリ、読み解きはAI</h3>
+      <p>合計・件数・平均などの集計はアプリが先に計算し、その結果をAIに渡します。AIには、数字の意味や傾向を読み解くことに集中してもらいます。</p>
+      <h3>判断を押し付けない</h3>
+      <p>TOAILOのアプリは、お金の使い方や仕事の進め方の良し悪しを判定しません。AIの回答も、振り返りのための参考のひとつとして使っていただくことを想定しています。</p>
+    </div>
+
+    <h2 class="sub">AI連携のしくみ</h2>
+    <HowItWorks />
+
+    <h2 class="sub">提供中のアプリ</h2>
+    <ul class="apps">
+      {APP_LIST.map((a) => (
+        <li class="card"><a href={path(a.path)}><strong>{a.name}</strong></a><br /><span class="muted small">{a.summary}</span></li>
+      ))}
+    </ul>
+
+    <h2 class="sub">お問い合わせ</h2>
+    <p>アプリについてのご質問・不具合のご報告は、<a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> までお問い合わせください。</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .page { padding: 24px var(--gutter) 64px; }
+  .sub { margin-top: 2.4em; }
+  .apps { list-style: none; padding: 0; display: grid; gap: 12px; }
+</style>

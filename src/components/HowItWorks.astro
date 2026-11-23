@@ -1,0 +1,27 @@
+---
+/** TOAILO の仕組み：記録する → 持ち出す → AIで活かす（アプリ内でAIは動かない） */
+const steps = [
+  { no: '01', title: '記録する', body: '日々のお金やタスクを、アプリに記録します。データはお使いの端末の中に保存されます。' },
+  { no: '02', title: '持ち出す', body: '期間と目的を選ぶと、AIに渡しやすい形のテキストを作成。含める項目は自分で選び、コピーします。' },
+  { no: '03', title: 'AIで活かす', body: 'ChatGPT・Claude・Geminiなど、ふだん使っているAIに貼り付けて、分析や振り返りに使います。' },
+];
+---
+<ol class="steps">
+  {steps.map((s) => (
+    <li class="card step" data-reveal>
+      <span class="step-no" aria-hidden="true">{s.no}</span>
+      <h3>{s.title}</h3>
+      <p class="muted">{s.body}</p>
+    </li>
+  ))}
+</ol>
+<p class="note small" data-reveal>
+  TOAILO のアプリは、アプリの中でAIを呼び出したり、記録をAIへ自動で送信したりしません。AIに何を渡すかは、いつも利用者が決めます。
+</p>
+
+<style>
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; counter-reset: s; }
+  @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step-no { display: inline-block; font-weight: 800; color: var(--accent-strong); font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .note { margin-top: 20px; padding: 14px 18px; border-radius: var(--radius-sm); background: var(--accent-subtle); color: var(--text); }
+</style>

@@ -1,0 +1,80 @@
+---
+/** 記事一覧（全体・カテゴリ別で共通） */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import GuideCard from '@/components/GuideCard.astro';
+import { GUIDE_CATEGORIES, type GuideCategory } from '@/content.config';
+import { getPublishedGuides } from '@/lib/guides';
+import { breadcrumbLd } from '@/lib/jsonld';
+import { absoluteUrl, path } from '@/lib/url';
+import { APP_LIST } from '@/data/apps';
+
+interface Props { category?: GuideCategory }
+const { category } = Astro.props;
+const all = await getPublishedGuides();
+const guides = category ? all.filter((g) => g.data.category === category) : all;
+const cat = category ? GUIDE_CATEGORIES[category] : undefined;
+const pagePath = category ? `/guides/category/${category}/` : '/guides/';
+const crumbs = [
+  { name: 'ホーム', path: '/' },
+  { name: 'AI活用ガイド', path: '/guides/' },
+  ...(cat ? [{ name: cat.label, path: pagePath }] : []),
+];
+const title = cat ? `${cat.label}のAI活用ガイド` : 'AI活用ガイド';
+const description = cat
+  ? `${cat.description}を解説する、TOAILOのAI活用ガイド（${cat.label}）の記事一覧です。`
+  : '記録したデータをChatGPT・Claude・GeminiなどのAIで活かす方法を解説する、TOAILOのAI活用ガイドです。家計簿・タスク管理・AI活用全般の記事を新着順に掲載しています。';
+const counts = Object.fromEntries(
+  (Object.keys(GUIDE_CATEGORIES) as GuideCategory[]).map((k) => [k, all.filter((g) => g.data.category === k).length]),
+);
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: guides.map((g, i) => ({ '@type': 'ListItem', position: i + 1, url: absoluteUrl(`/guides/${g.data.slug}/`), name: g.data.title })),
+};
+---
+<BaseLayout title={title} description={description} pagePath={pagePath} jsonLd={[breadcrumbLd(crumbs), itemList]}>
+  <div class="container"><Breadcrumbs items={crumbs} /></div>
+  <section class="section page-head">
+    <div class="container">
+      <p class="eyebrow">GUIDES</p>
+      <h1>{title}</h1>
+      <p class="lead">{cat ? cat.description + 'をまとめています。' : '記録したデータをAIで活かすための、具体的な手順と考え方をまとめています。記事中の分析例は、すべて架空のサンプルデータです。'}</p>
+      <nav aria-label="カテゴリ" class="cats">
+        <ul>
+          <li><a href={path('/guides/')} aria-current={!category ? 'page' : undefined}>すべて（{all.length}）</a></li>
+          {(Object.keys(GUIDE_CATEGORIES) as GuideCategory[]).map((k) => (
+            <li><a href={path(`/guides/category/${k}/`)} aria-current={category === k ? 'page' : undefined}>{GUIDE_CATEGORIES[k].label}（{counts[k]}）</a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </section>
+  <section class="section list">
+    <div class="container">
+      {guides.length > 0 ? (
+        <div class="grid grid-3">{guides.map((g) => <GuideCard guide={g} headingLevel="h2" />)}</div>
+      ) : (
+        <p class="muted">このカテゴリの記事は準備中です。</p>
+      )}
+    </div>
+  </section>
+  <section class="section section-soft">
+    <div class="container">
+      <h2>記事で紹介しているアプリ</h2>
+      <ul class="app-links">
+        {APP_LIST.map((a) => <li><a href={path(a.path)}>{a.name}</a><span class="muted small"> — {a.tagline}</span></li>)}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head { padding-bottom: 16px; }
+  .list { padding-top: 16px; }
+  .cats ul { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .cats a { display: inline-block; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); text-decoration: none; color: var(--text); font-weight: 600; font-size: 0.92rem; background: var(--bg); }
+  .cats a:hover { border-color: var(--accent-strong); }
+  .cats a[aria-current='page'] { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+  .app-links { padding-left: 1.2em; }
+</style>

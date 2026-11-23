@@ -1,0 +1,183 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import FaqList from '@/components/FaqList.astro';
+import AppStoreButton from '@/components/AppStoreButton.astro';
+import GuideCard from '@/components/GuideCard.astro';
+import { APPS, type AppId } from '@/data/apps';
+import { getPublishedGuides } from '@/lib/guides';
+import { breadcrumbLd, faqLd, softwareApplicationLd } from '@/lib/jsonld';
+import { formatDate, path } from '@/lib/url';
+
+interface Props { appId: AppId }
+const app = APPS[Astro.props.appId];
+const crumbs = [
+  { name: 'ホーム', path: '/' },
+  { name: app.name, path: app.path },
+];
+const icon512 = await getImage({ src: app.icon, width: 512, height: 512, format: 'png' });
+const iconUrl = new URL(icon512.src, Astro.site).toString();
+const guides = (await getPublishedGuides()).filter((g) => g.data.relatedApp === app.id).slice(0, 3);
+const otherApp = app.id === 'household' ? APPS.tasks : APPS.household;
+---
+<BaseLayout
+  title={`${app.name}（${app.platform}アプリ）`}
+  description={`${app.summary}アプリ内でAIを呼び出さず、データは端末に保存。${app.platform}向け・${app.pricing.price}。`}
+  pagePath={app.path}
+  jsonLd={[softwareApplicationLd(app, iconUrl), breadcrumbLd(crumbs), faqLd(app.faq)]}
+>
+  <div class="container"><Breadcrumbs items={crumbs} /></div>
+
+  <section class="app-hero">
+    <div class="container hero-grid">
+      <div>
+        <Image src={app.icon} alt={`${app.name} のアプリアイコン`} width={96} height={96} class="hero-icon" loading="eager" />
+        <h1>{app.name}</h1>
+        <p class="hero-tagline">{app.tagline}</p>
+        <p class="lead">{app.summary}</p>
+        <div class="btn-row"><AppStoreButton app={app} /><a class="btn btn-secondary" href="#ai-export">AI出力のしくみ</a></div>
+        <p class="small muted facts">{app.platform}（{app.minimumOs}）・{app.appStoreGenre}・{app.pricing.price}・{formatDate(app.releaseDate)} 配信開始</p>
+      </div>
+      <div class="hero-shots" aria-label="アプリの画面">
+        {app.screenshots.slice(0, 2).map((s, i) => (
+          <Image src={s.src} alt={s.alt} widths={[280, 420, 560]} sizes="(min-width: 860px) 240px, 42vw" class={`shot shot-${i}`} loading={i === 0 ? 'eager' : 'lazy'} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="features">
+    <div class="container">
+      <div class="section-head"><p class="eyebrow">FEATURES</p><h2 id="features">主な機能</h2></div>
+      <div class="grid grid-3">
+        {app.features.map((f) => (
+          <div class="card" data-reveal><h3>{f.title}</h3><p class="muted">{f.body}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" aria-labelledby="ai-export" id="ai-export-section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">TO AI</p>
+        <h2 id="ai-export">AI出力機能（AIへ）</h2>
+        <p class="lead">{app.aiExport.lead}</p>
+      </div>
+      <h3>選べる分析の目的</h3>
+      <ul class="purpose-grid">
+        {app.aiExport.purposes.map((p) => (
+          <li class="card purpose" data-reveal><strong>{p.title}</strong><span class="muted small">{p.body}</span></li>
+        ))}
+      </ul>
+      <div class="ai-detail">
+        <div data-reveal>
+          <h3>渡す内容は、自分で決める</h3>
+          <ul class="check-list">{app.aiExport.points.map((p) => <li>{p}</li>)}</ul>
+        </div>
+        <div class="more-shots">
+          {app.screenshots.slice(2, 4).map((s) => (
+            <Image src={s.src} alt={s.alt} widths={[240, 360, 480]} sizes="(min-width: 860px) 200px, 40vw" class="shot" loading="lazy" />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="flow">
+    <div class="container">
+      <div class="section-head"><p class="eyebrow">HOW TO</p><h2 id="flow">利用の流れ</h2></div>
+      <ol class="flow">
+        {app.flow.map((s, i) => (
+          <li class="card" data-reveal><span class="flow-no" aria-hidden="true">{i + 1}</span><h3>{s.title}</h3><p class="muted">{s.body}</p></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section-soft" aria-labelledby="pricing">
+    <div class="container">
+      <div class="section-head"><p class="eyebrow">PLAN</p><h2 id="pricing">対応OS・料金・広告</h2></div>
+      <div class="grid grid-2">
+        <div class="card" data-reveal>
+          <h3>基本情報</h3>
+          <dl class="spec">
+            <div><dt>対応端末</dt><dd>{app.platform}（{app.minimumOs}）</dd></div>
+            <div><dt>提供</dt><dd>App Store（日本）</dd></div>
+            <div><dt>価格</dt><dd>{app.pricing.price}</dd></div>
+            <div><dt>会員登録</dt><dd>不要</dd></div>
+            <div><dt>データの保存先</dt><dd>お使いの端末の中</dd></div>
+          </dl>
+        </div>
+        <div class="card" data-reveal>
+          <h3>無料版と TOAILO Pro</h3>
+          <p class="plan-label"><span class="badge badge-neutral">無料</span></p>
+          <ul class="check-list">{app.pricing.free.map((f) => <li>{f}</li>)}</ul>
+          <p class="plan-label"><span class="badge">TOAILO Pro</span></p>
+          <ul class="check-list">{app.pricing.pro.map((f) => <li>{f}</li>)}</ul>
+          <p class="small muted">{app.pricing.note}</p>
+        </div>
+      </div>
+      <div class="card ads" data-reveal><h3>広告について</h3><p class="muted">{app.pricing.ads}</p></div>
+    </div>
+  </section>
+
+  {guides.length > 0 && (
+    <section class="section" aria-labelledby="guides">
+      <div class="container">
+        <div class="section-head"><p class="eyebrow">GUIDES</p><h2 id="guides">{app.shortName}をAIで活かすガイド</h2></div>
+        <div class="grid grid-3">{guides.map((g) => <GuideCard guide={g} />)}</div>
+      </div>
+    </section>
+  )}
+
+  <section class="section section-soft" aria-labelledby="faq">
+    <div class="container prose-container">
+      <div class="section-head"><p class="eyebrow">FAQ</p><h2 id="faq">よくある質問</h2></div>
+      <FaqList items={app.faq} />
+      <p class="small muted support">そのほかのご質問・不具合のご報告は、<a href={`mailto:toailo.help@outlook.jp`}>toailo.help@outlook.jp</a> までお問い合わせください。</p>
+    </div>
+  </section>
+
+  <section class="section cta">
+    <div class="container cta-inner" data-reveal>
+      <h2>{app.name} を使ってみる</h2>
+      <div class="btn-row"><AppStoreButton app={app} /></div>
+      <p class="small muted">TOAILO シリーズの <a href={path(otherApp.path)}>{otherApp.name}</a> もあります。</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .app-hero { padding: 24px 0 56px; background: linear-gradient(180deg, var(--bg) 0%, var(--accent-subtle) 100%); }
+  .hero-grid { display: grid; gap: 32px; align-items: center; }
+  @media (min-width: 860px) { .hero-grid { grid-template-columns: 1.15fr 1fr; } }
+  .hero-icon { border-radius: 22px; box-shadow: 0 4px 16px rgb(0 0 0 / 0.15); margin-bottom: 18px; }
+  .hero-tagline { font-size: 1.2rem; font-weight: 700; color: var(--accent-strong); margin-bottom: 8px; }
+  .facts { margin-top: 16px; }
+  .hero-shots { display: flex; gap: 14px; justify-content: center; }
+  .shot { width: 100%; max-width: 240px; border-radius: 18px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .hero-shots .shot { width: 46%; }
+  .shot-1 { margin-top: 32px; }
+  .purpose-grid { list-style: none; padding: 0; margin: 0 0 32px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+  .purpose { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; }
+  .ai-detail { display: grid; gap: 28px; align-items: center; }
+  @media (min-width: 860px) { .ai-detail { grid-template-columns: 1.2fr 1fr; } }
+  .more-shots { display: flex; gap: 14px; justify-content: center; }
+  .more-shots .shot { width: 46%; max-width: 200px; }
+  .flow { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+  @media (min-width: 760px) { .flow { grid-template-columns: repeat(3, 1fr); } }
+  .flow-no { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent-strong); color: #fff; font-weight: 800; margin-bottom: 10px; }
+  .spec { margin: 0; }
+  .spec div { display: grid; grid-template-columns: 8em 1fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .spec div:last-child { border-bottom: 0; }
+  .spec dt { color: var(--text-tertiary); font-size: 0.92rem; }
+  .spec dd { margin: 0; }
+  .plan-label { margin: 12px 0 6px; }
+  .ads { margin-top: 20px; }
+  .support { margin-top: 20px; }
+  .cta { text-align: center; }
+  .cta-inner { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .cta-inner h2 { margin: 0; }
+</style>

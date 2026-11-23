@@ -1,0 +1,52 @@
+---
+import Logo from '@/components/Logo.astro';
+import { SITE } from '@/config/site';
+import { path } from '@/lib/url';
+---
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <Logo size={24} />
+      <p class="small muted">{SITE.message}</p>
+    </div>
+    <nav aria-label="フッターメニュー" class="footer-nav">
+      <div>
+        <p class="footer-head">アプリ</p>
+        <ul>
+          <li><a href={path('/apps/household/')}>家計簿 by TOAILO</a></li>
+          <li><a href={path('/apps/tasks/')}>ToDoリスト by TOAILO</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-head">読む</p>
+        <ul>
+          <li><a href={path('/guides/')}>AI活用ガイド</a></li>
+          <li><a href={path('/faq/')}>よくある質問</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-head">TOAILO</p>
+        <ul>
+          <li><a href={path('/about/')}>TOAILOについて</a></li>
+          <li><a href={path('/privacy/')}>プライバシー</a></li>
+          <li><a href={`mailto:${SITE.contactEmail}`}>お問い合わせ</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="container"><p class="copyright small">© {SITE.copyrightYear} TOAILO</p></div>
+</footer>
+
+<style>
+  .site-footer { background: var(--bg-soft); border-top: 1px solid var(--border); padding: 48px 0 24px; margin-top: 0; }
+  .footer-inner { display: grid; gap: 32px; }
+  @media (min-width: 760px) { .footer-inner { grid-template-columns: 1fr 2fr; } }
+  .footer-brand p { margin-top: 10px; }
+  .footer-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  .footer-head { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: 8px; }
+  .footer-nav ul { list-style: none; padding: 0; margin: 0; }
+  .footer-nav li { margin-bottom: 6px; }
+  .footer-nav a { color: var(--text); text-decoration: none; font-size: 0.95rem; }
+  .footer-nav a:hover { color: var(--accent-strong); text-decoration: underline; }
+  .copyright { margin: 32px 0 0; color: var(--text-tertiary); }
+</style>

@@ -1,0 +1,55 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { SITE } from '@/config/site';
+import { breadcrumbLd } from '@/lib/jsonld';
+const crumbs = [{ name: 'ホーム', path: '/' }, { name: 'プライバシー', path: '/privacy/' }];
+/** 各アプリのプライバシーポリシー（App Store に登録済みのURL。内容はアプリごとに管理） */
+const appPolicies = [
+  { name: '家計簿 by TOAILO', url: 'https://arukari-paint.github.io/kakeibo/privacy.html' },
+  { name: 'ToDoリスト by TOAILO', url: 'https://arukari-paint.github.io/todolist-site/privacy.html' },
+];
+---
+<BaseLayout
+  title="プライバシー"
+  description="TOAILO公式サイトにおける情報の取り扱いについて説明します。各アプリのプライバシーポリシーへのリンクも掲載しています。"
+  pagePath="/privacy/"
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="container prose-container"><Breadcrumbs items={crumbs} /></div>
+  <div class="container prose-container page">
+    <p class="eyebrow">PRIVACY</p>
+    <h1>サイトのプライバシー</h1>
+    <p class="muted small">制定日：2026年11月23日</p>
+    <div class="prose">
+      <p>このページは、TOAILO公式サイト（以下「本サイト」）における情報の取り扱いについて説明するものです。各アプリでの情報の取り扱いは、下記「アプリのプライバシーポリシー」をご覧ください。</p>
+
+      <h2>本サイトで取得する情報</h2>
+      <ul>
+        <li>本サイトには、会員登録・お問い合わせフォーム・コメント欄はありません。</li>
+        <li>本サイトは、アクセス解析ツール・広告・Cookie を使用していません。</li>
+      </ul>
+
+      <h2>ホスティングについて</h2>
+      <p>本サイトは GitHub, Inc. が提供する GitHub Pages で公開しています。ページの配信にあたり、GitHub がアクセスした方の IP アドレスなどの情報を記録することがあります。詳しくは <a href="https://docs.github.com/ja/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">GitHub のプライバシーに関する声明</a>をご覧ください。</p>
+
+      <h2>外部サイトへのリンク</h2>
+      <p>本サイトには App Store などの外部サイトへのリンクがあります。リンク先での情報の取り扱いは、各サイトの方針に従います。</p>
+
+      <h2>アプリのプライバシーポリシー</h2>
+      <ul>
+        {appPolicies.map((p) => <li><a href={p.url} target="_blank" rel="noopener noreferrer">{p.name} プライバシーポリシー</a></li>)}
+      </ul>
+
+      <h2>本ページの変更</h2>
+      <p>本サイトでの情報の取り扱いを変更する場合（アクセス解析の導入など）は、このページを改定してお知らせします。</p>
+
+      <h2>お問い合わせ</h2>
+      <p><a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a></p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page { padding: 24px var(--gutter) 64px; }
+</style>

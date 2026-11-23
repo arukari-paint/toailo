@@ -1,0 +1,32 @@
+---
+import { Image } from 'astro:assets';
+import AppStoreButton from '@/components/AppStoreButton.astro';
+import type { AppInfo } from '@/data/apps';
+import { path } from '@/lib/url';
+interface Props { app: AppInfo }
+const { app } = Astro.props;
+---
+<aside class="related-app card" aria-labelledby={`related-app-${app.id}`}>
+  <p class="eyebrow">この記事に関連するアプリ</p>
+  <div class="head">
+    <Image src={app.icon} alt="" width={56} height={56} class="icon" />
+    <div>
+      <p class="name" id={`related-app-${app.id}`}><a href={path(app.path)}>{app.name}</a></p>
+      <p class="small muted meta">{app.platform}（{app.minimumOs}）・{app.pricing.price}</p>
+    </div>
+  </div>
+  <p class="muted">{app.summary}</p>
+  <div class="btn-row">
+    <a class="btn btn-secondary" href={path(app.path)}>アプリの詳細</a>
+    <AppStoreButton app={app} />
+  </div>
+</aside>
+
+<style>
+  .related-app { margin: 40px 0; border-color: var(--accent-line); background: linear-gradient(180deg, var(--accent-subtle), var(--bg) 60%); }
+  .head { display: flex; gap: 14px; align-items: center; margin-bottom: 10px; }
+  .icon { border-radius: 14px; }
+  .name { font-weight: 700; font-size: 1.1rem; margin: 0; }
+  .name a { color: var(--text); }
+  .meta { margin: 0; }
+</style>

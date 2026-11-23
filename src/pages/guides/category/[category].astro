@@ -1,0 +1,10 @@
+---
+import GuideIndex from '@/components/GuideIndex.astro';
+import { GUIDE_CATEGORIES, type GuideCategory } from '@/content.config';
+
+export function getStaticPaths() {
+  return (Object.keys(GUIDE_CATEGORIES) as GuideCategory[]).map((category) => ({ params: { category } }));
+}
+const { category } = Astro.params as { category: GuideCategory };
+---
+<GuideIndex category={category} />

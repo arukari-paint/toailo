@@ -1,0 +1,12 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { path } from '@/lib/url';
+---
+<BaseLayout title="ページが見つかりません" description="お探しのページは見つかりませんでした。" pagePath="/404/" noindex>
+  <div class="container prose-container page">
+    <h1>ページが見つかりません</h1>
+    <p class="muted">URLが変わったか、ページが削除された可能性があります。</p>
+    <div class="btn-row"><a class="btn btn-primary" href={path('/')}>トップページへ</a><a class="btn btn-secondary" href={path('/guides/')}>AI活用ガイド</a></div>
+  </div>
+</BaseLayout>
+<style>.page { padding: 80px var(--gutter); }</style>

@@ -1,0 +1,29 @@
+---
+import { GUIDE_CATEGORIES } from '@/content.config';
+import type { Guide } from '@/lib/guides';
+import { formatDate, path } from '@/lib/url';
+import { APPS } from '@/data/apps';
+interface Props { guide: Guide; headingLevel?: 'h2' | 'h3' }
+const { guide, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const d = guide.data;
+---
+<article class="card guide-card" data-reveal>
+  <p class="guide-meta small">
+    <a class="badge" href={path(`/guides/category/${d.category}/`)}>{GUIDE_CATEGORIES[d.category].label}</a>
+    <time datetime={d.publishedAt}>{formatDate(d.publishedAt)}</time>
+  </p>
+  <H class="guide-title"><a href={path(`/guides/${d.slug}/`)}>{d.title}</a></H>
+  <p class="muted small">{d.description}</p>
+  {d.relatedApp && <p class="small related">関連アプリ：<a href={path(APPS[d.relatedApp].path)}>{APPS[d.relatedApp].name}</a></p>}
+</article>
+
+<style>
+  .guide-card { display: flex; flex-direction: column; }
+  .guide-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: var(--text-tertiary); }
+  .badge { text-decoration: none; }
+  .guide-title { font-size: 1.1rem; margin-bottom: 8px; }
+  .guide-title a { color: var(--text); text-decoration: none; }
+  .guide-title a:hover { color: var(--accent-strong); text-decoration: underline; }
+  .related { margin-top: auto; margin-bottom: 0; color: var(--text-tertiary); }
+</style>

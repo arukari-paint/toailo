@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import FaqList from '@/components/FaqList.astro';
+import { SITE } from '@/config/site';
+import { APPS } from '@/data/apps';
+import { SITE_FAQ } from '@/data/faq';
+import { breadcrumbLd, faqLd } from '@/lib/jsonld';
+import { path } from '@/lib/url';
+const crumbs = [{ name: 'ホーム', path: '/' }, { name: 'よくある質問', path: '/faq/' }];
+const groups = [
+  { id: 'toailo', title: 'TOAILO全般', items: SITE_FAQ },
+  { id: 'household', title: APPS.household.name, items: APPS.household.faq, link: APPS.household.path },
+  { id: 'tasks', title: APPS.tasks.name, items: APPS.tasks.faq, link: APPS.tasks.path },
+];
+---
+<BaseLayout
+  title="よくある質問"
+  description="TOAILOのアプリ（家計簿 by TOAILO・ToDoリスト by TOAILO）についてのよくある質問です。AIへのデータの渡し方、データの保存先、料金、対応端末などにお答えします。"
+  pagePath="/faq/"
+  jsonLd={[breadcrumbLd(crumbs), faqLd(groups.flatMap((g) => g.items))]}
+>
+  <div class="container prose-container"><Breadcrumbs items={crumbs} /></div>
+  <div class="container prose-container page">
+    <p class="eyebrow">FAQ</p>
+    <h1>よくある質問</h1>
+    <nav aria-label="質問の分類" class="jump">
+      <ul>{groups.map((g) => <li><a href={`#${g.id}`}>{g.title}</a></li>)}</ul>
+    </nav>
+    {groups.map((g) => (
+      <section aria-labelledby={g.id} class="group">
+        <h2 id={g.id}>{g.title}</h2>
+        <FaqList items={g.items} />
+        {g.link && <p class="small"><a href={path(g.link)}>{g.title} の詳細を見る →</a></p>}
+      </section>
+    ))}
+    <section class="group" aria-labelledby="contact">
+      <h2 id="contact">解決しない場合</h2>
+      <p>ご質問・不具合のご報告は <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> までお問い合わせください。</p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page { padding: 24px var(--gutter) 64px; }
+  .jump ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .jump a { display: inline-block; padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; font-size: 0.92rem; }
+  .group { margin-top: 48px; }
+  .group > p { margin-top: 16px; }
+</style>

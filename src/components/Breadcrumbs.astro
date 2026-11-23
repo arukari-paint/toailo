@@ -1,0 +1,25 @@
+---
+/** パンくずリスト（表示と BreadcrumbList 構造化データの元データは同じ配列を使う） */
+import { path } from '@/lib/url';
+interface Props { items: { name: string; path: string }[] }
+const { items } = Astro.props;
+---
+<nav aria-label="パンくずリスト" class="breadcrumbs">
+  <ol>
+    {items.map((item, i) => (
+      <li>
+        {i < items.length - 1 ? <a href={path(item.path)}>{item.name}</a> : <span aria-current="page">{item.name}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs { padding-top: 20px; font-size: 0.85rem; }
+  ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 0; color: var(--text-tertiary); }
+  li { display: inline-flex; align-items: center; }
+  li + li::before { content: '›'; margin: 0 8px; color: var(--text-tertiary); }
+  a { color: var(--text-secondary); text-decoration: none; }
+  a:hover { color: var(--accent-strong); text-decoration: underline; }
+  [aria-current] { color: var(--text-secondary); }
+</style>

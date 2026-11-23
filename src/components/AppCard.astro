@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import AppStoreButton from '@/components/AppStoreButton.astro';
+import type { AppInfo } from '@/data/apps';
+import { path } from '@/lib/url';
+interface Props { app: AppInfo; headingLevel?: 'h2' | 'h3' }
+const { app, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+---
+<article class="card app-card" data-reveal>
+  <div class="app-head">
+    <Image src={app.icon} alt="" width={72} height={72} class="app-icon" />
+    <div>
+      <H class="app-name"><a href={path(app.path)}>{app.name}</a></H>
+      <p class="small muted app-meta">{app.platform}・{app.appStoreGenre}・{app.pricing.price}</p>
+    </div>
+  </div>
+  <p class="app-tagline">{app.tagline}</p>
+  <p class="muted">{app.summary}</p>
+  <div class="btn-row">
+    <a class="btn btn-secondary" href={path(app.path)}>詳しく見る<span class="visually-hidden">（{app.name}）</span></a>
+    <AppStoreButton app={app} />
+  </div>
+</article>
+
+<style>
+  .app-card { display: flex; flex-direction: column; }
+  .app-head { display: flex; gap: 16px; align-items: center; margin-bottom: 14px; }
+  .app-icon { border-radius: 18px; flex: none; box-shadow: 0 2px 8px rgb(0 0 0 / 0.12); }
+  .app-name { margin: 0; font-size: 1.2rem; }
+  .app-name a { color: var(--text); text-decoration: none; }
+  .app-name a:hover { color: var(--accent-strong); text-decoration: underline; }
+  .app-meta { margin: 2px 0 0; }
+  .app-tagline { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+  .btn-row { margin-top: auto; padding-top: 8px; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>

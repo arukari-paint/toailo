@@ -1,0 +1,85 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Toc from '@/components/Toc.astro';
+import FaqList from '@/components/FaqList.astro';
+import GuideCard from '@/components/GuideCard.astro';
+import RelatedApp from '@/components/RelatedApp.astro';
+import { GUIDE_CATEGORIES } from '@/content.config';
+import { APPS } from '@/data/apps';
+import { getPublishedGuides, relatedGuides, type Guide } from '@/lib/guides';
+import { articleLd, breadcrumbLd, faqLd } from '@/lib/jsonld';
+import { absoluteUrl, formatDate, path } from '@/lib/url';
+
+export async function getStaticPaths() {
+  const all = await getPublishedGuides();
+  return all.map((guide) => ({ params: { slug: guide.data.slug }, props: { guide, all } }));
+}
+
+interface Props { guide: Guide; all: Guide[] }
+const { guide, all } = Astro.props;
+const d = guide.data;
+const { Content, headings } = await render(guide);
+const pagePath = `/guides/${d.slug}/`;
+const cat = GUIDE_CATEGORIES[d.category];
+const crumbs = [
+  { name: 'ホーム', path: '/' },
+  { name: 'AI活用ガイド', path: '/guides/' },
+  { name: cat.label, path: `/guides/category/${d.category}/` },
+  { name: d.title, path: pagePath },
+];
+const related = relatedGuides(guide, all);
+const app = d.relatedApp ? APPS[d.relatedApp] : null;
+const ld = [
+  articleLd({ title: d.title, description: d.description, path: pagePath, publishedAt: d.publishedAt, updatedAt: d.updatedAt, image: absoluteUrl('/og-default.png') }),
+  breadcrumbLd(crumbs),
+  ...(d.faq?.length ? [faqLd(d.faq)] : []),
+];
+---
+<BaseLayout title={d.title} description={d.description} pagePath={pagePath} ogType="article" jsonLd={ld} publishedAt={d.publishedAt} updatedAt={d.updatedAt}>
+  <div class="container prose-container"><Breadcrumbs items={crumbs} /></div>
+  <article class="container prose-container article">
+    <header class="article-head">
+      <p class="meta small">
+        <a class="badge" href={path(`/guides/category/${d.category}/`)}>{cat.label}</a>
+        <span>公開日 <time datetime={d.publishedAt}>{formatDate(d.publishedAt)}</time></span>
+        {d.updatedAt !== d.publishedAt && <span>更新日 <time datetime={d.updatedAt}>{formatDate(d.updatedAt)}</time></span>}
+      </p>
+      <h1>{d.title}</h1>
+      <p class="lead">{d.description}</p>
+    </header>
+    <Toc headings={headings} />
+    <div class="prose"><Content /></div>
+
+    {d.faq && d.faq.length > 0 && (
+      <section class="article-faq" aria-labelledby="article-faq">
+        <h2 id="article-faq">よくある質問</h2>
+        <FaqList items={d.faq} />
+      </section>
+    )}
+
+    {app && <RelatedApp app={app} />}
+  </article>
+
+  {related.length > 0 && (
+    <section class="section section-soft" aria-labelledby="related">
+      <div class="container">
+        <h2 id="related">関連記事</h2>
+        <div class="grid grid-3">{related.map((g) => <GuideCard guide={g} />)}</div>
+        <p class="back"><a href={path('/guides/')}>AI活用ガイドの一覧へ →</a></p>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .article { padding-bottom: 48px; }
+  .article-head { padding-top: 24px; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; color: var(--text-tertiary); margin-bottom: 14px; }
+  .badge { text-decoration: none; }
+  .article-faq { margin-top: 48px; }
+  .article-faq h2 { padding-bottom: 0.35em; border-bottom: 2px solid var(--accent-subtle); }
+  .back { margin-top: 24px; font-weight: 700; }
+  .back a { text-decoration: none; }
+</style>
