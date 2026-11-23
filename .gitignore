@@ -6,3 +6,5 @@ dist/
 .env.*
 !.env.example
 .claude/
+# TOAILO Manager の状態データ（記事の原稿・承認状態。公開リポジトリに含めない）
+tools/toailo-manager/data/

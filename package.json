@@ -12,7 +12,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "check:links": "node scripts/check-links.mjs",
-    "verify": "astro check && astro build && node scripts/check-links.mjs"
+    "verify": "astro check && astro build && node scripts/check-links.mjs",
+    "manager": "node tools/toailo-manager/server.mjs",
+    "test:manager": "node --test --test-concurrency=1 \"tools/toailo-manager/test/*.test.mjs\""
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -20,6 +22,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@astrojs/internal-helpers": "0.13.1",
+    "@astrojs/markdown-satteri": "0.4.7",
+    "sharp": "0.35.5",
     "typescript": "^6.0.3"
   }
 }

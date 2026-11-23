@@ -18,6 +18,10 @@ node scripts/make-brand-images.mjs   # ファビコン・OG画像の再生成（
 
 Node.js 22.23.4 以上（開発・CI は Node 24 LTS）。`npm run preview` はバックグラウンドで常駐するので、止めるときは `npx astro preview stop`。
 
+## 記事の追加（TOAILO Manager）
+
+月1回の記事追加は、ローカル管理ツール **TOAILO Manager** で行う。`tools/toailo-manager/TOAILO Manager.command` をダブルクリックで起動。手順は [tools/toailo-manager/README.md](tools/toailo-manager/README.md)。
+
 ## 構成
 
 | 場所 | 内容 |
@@ -33,6 +37,7 @@ Node.js 22.23.4 以上（開発・CI は Node 24 LTS）。`npm run preview` は�
 | `src/assets/apps/` | アプリアイコン・スクリーンショット（各アプリのリポジトリからコピー。ビルド時に WebP に最適化） |
 | `public/` | ファビコン・OG画像 |
 | `scripts/check-links.mjs` | ビルド結果の内部リンク・アンカー・外部リンクの rel を検証 |
+| `tools/toailo-manager/` | 記事管理ツール（ローカル専用。ビルドには含まれない） |
 | `.github/workflows/deploy.yml` | PR：型チェック・ビルド・リンク検証 / main：さらに GitHub Pages へデプロイ |
 
 ## 公開URLの変更

@@ -23,6 +23,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Test TOAILO Manager (local article tool)
+        run: npm run test:manager
       - name: Type check
         run: npx astro check
       - name: Build
